@@ -1,7 +1,24 @@
 import React, {useEffect} from 'react';
-import {SubmitHandler, useForm} from 'react-hook-form';
+import {
+	Controller,
+	SubmitHandler,
+	useForm
+} from 'react-hook-form';
+import ReactSelect, {SingleValue} from 'react-select';
 import './App.css';
-import {IShippingFields} from './types/Form.interface'
+import {IOption, IShippingFields} from './types/Form.interface'
+
+const options: IOption[] = [
+	{value: 'Russia', label: 'Russia'},
+	{value: 'USA', label: 'USA'},
+	{value: 'Germany', label: 'Germany'},
+]
+
+const getValue = (value: SingleValue<string | IOption>) => {
+	return value
+		? options.find((option) => option.value === value)
+		: ''
+}
 
 function App() {
 	
@@ -27,6 +44,7 @@ function App() {
 		watch,
 		// Позволяет задать самим value
 		setValue,
+		control,
 	} = useForm<IShippingFields>({
 		// defaultValues: {} // Дефолтные значения в таблице
 		// listener state: onSubmit, onBlur, onTouched, onChange, all
@@ -39,12 +57,14 @@ function App() {
 		reset()
 	}
 	
-/* // Подписка на события
-	useEffect(() => {
-		const subscribe = watch((value, {name,type}) => console.log(value,name,type))
-		return subscribe.unsubscribe()
-	},[watch])
-*/
+	/* // Подписка на события
+		useEffect(() => {
+			const subscribe = watch((value, {name,type}) => console.log(value,name,type))
+			return subscribe.unsubscribe()
+		},[watch])
+	*/
+	
+	
 	
 	return (
 		<>
@@ -83,6 +103,35 @@ function App() {
 						{errors.email.message}
 					</div>
 				}
+				
+				<Controller
+					control={control}
+					// Поле, которое будем менять
+					name={'address.country'}
+					// Проверка
+					rules={{required: 'Country is required field'}}
+					render={(
+						{
+							field: {value,onChange},
+							fieldState: {error}
+						}
+					) => (
+						<>
+							<ReactSelect
+								placeholder='countries'
+								options={options}
+								value={getValue(value)}
+								onChange={(value: SingleValue<string | IOption>) => onChange(value)}
+							/>
+							{error &&
+								<div style={{color: 'red'}}>
+									{error.message}
+								</div>
+							}
+						</>
+					)}
+				/>
+				
 				<div>
 					<button>Отправить</button>
 				</div>
@@ -93,7 +142,8 @@ function App() {
 						setValue('name', 'Vladimir')
 						setValue('email', 'test@mail.ru')
 					}}
-				>Заполнить поля</button>
+				>Заполнить поля
+				</button>
 			</div>
 		</>
 	);

@@ -9,3 +9,8 @@ export interface IShippingFields {
 	name: string
 	address: IAddress
 }
+
+export interface IOption {
+	label: string
+	value: string
+}
