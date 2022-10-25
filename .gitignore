@@ -23,4 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 /.idea/vcs.xml
-/.idea/
+/.idea/modules.xml
+/.idea/react-hook-form.iml
+/.idea/**.*
